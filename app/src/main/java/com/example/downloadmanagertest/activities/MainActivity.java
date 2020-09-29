@@ -22,6 +22,9 @@ import com.example.downloadmanagertest.retrofit.NetworkService;
 import java.io.File;
 import java.io.FileOutputStream;
 
+import org.acra.ACRA;
+import org.acra.ReportingInteractionMode;
+import org.acra.annotation.ReportsCrashes;
 import org.apache.commons.io.IOUtils;
 
 import okhttp3.ResponseBody;
@@ -29,6 +32,9 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
+@ReportsCrashes(mailTo = "rabowvdk125@gmail.com",
+        mode = ReportingInteractionMode.TOAST,
+        resToastText = R.string.crash)
 public class MainActivity extends AppCompatActivity {
 
     private Button btnDownloadToDownloads, btnDownloadToInternal, btnDownloadByRetrofit;
@@ -38,12 +44,15 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        ACRA.init(getApplication());
+
         btnDownloadToDownloads = findViewById(R.id.btnDownloadToDownloads);
         btnDownloadToDownloads.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 if (checkPermissions()) startDownloadManagerToDownloads();
                 else requestPerms();
+                throw new RuntimeException("App is crashed");
             }
         });
 
@@ -138,7 +147,7 @@ public class MainActivity extends AppCompatActivity {
             ActivityCompat.requestPermissions(this,perm,123);
         }
     }
-    
+
 
     private boolean checkPermissions(){
 
